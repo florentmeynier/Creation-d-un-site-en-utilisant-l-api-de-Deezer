@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Deezer Likes</title>
+    <script type="text/javascript" src="js/index.js"></script>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <header class="background" id="#">
+        <button class="registerBtn" id="registerButton">Sign up</button>
+        <button class="loginBtn" id="loginButton">Log in</button>
+        <button class="disconnectBtn" id="disconnectButton">Disconnect</button>
+        <div class="doResearch">
+            <input type="search" id="search-music" name="searchInput">
+            <button id="searchButton">Search</button>
+        </div>
+
+        <div id="loginForms" class="lforms">
+            <div class="formsContent">
+                <form id="loginForm" action="" method="post" enctype="application/x-www-form-urlencoded">
+                    <div class="form-example">
+                        <label for="loginConnect">Enter your login</label>
+                        <input type="text" name="login" id="loginConnect" required>
+                    </div>
+                    <div class="form-example">
+                        <label for="pwdConnect">Enter your password</label>
+                        <input type="password" name="pwd" id="pwdConnect" required>
+                    </div>
+                    <div class="form-example">
+                        <input type="submit" value="Connect">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="registerForms" class="rforms">
+            <div class="formsContent">
+                <form id="registerForm" action method="post" enctype="application/x-www-form-urlencoded">
+                    <div class="form-example" data-children-count="1">
+                        <label for="loginRegister">Enter your login</label>
+                        <input type="text" name="login" id="loginRegister" required>
+                    </div>
+                    <div class="form-example" data-children-count="1">
+                        <label for="mailRegister">Enter your email</label>
+                        <input type="text" name="mail" id="mailRegister" required>
+                    </div>
+                    <div class="form-example" data-children-count="1">
+                        <label for="pwdRegister">Enter your password</label>
+                        <input type="password" name="pwd" id="pwdRegister" required>
+                    </div>
+                    <div class="form-example" data-children-count="1">
+                        <input type="submit" value="Register">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </header>
+
+    <div id="display-music">
+        <div id="display-music2">
+
+        </div>
+    </div>
+
+    <div id="search-result" class="searchResult">
+        <h1>Research results</h1>
+        <ol id="search-result-list">
+
+        </ol>
+    </div>
+</body>
+</html>

@@ -1,17 +1,20 @@
 package comment
 
 import (
+	"encoding/json"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/database"
+	"github.com/bouchenakihabib/PC3R_DEEZER/src/like"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/utils"
 	"net/http"
+	"strconv"
 )
 
 func GetComment(resp http.ResponseWriter, req *http.Request) {
-	id := req.FormValue("id")
+	idMusic := req.FormValue("id_Music")
 	idUser := req.FormValue("id_User")
 	request := ""
-	if id != "" {
-		request += "id = " + id
+	if idMusic != "" {
+		request += "id_Music = " + idMusic
 		if idUser != "" {
 			request += " AND id_User = " + idUser
 		}
@@ -37,13 +40,19 @@ func GetComment(resp http.ResponseWriter, req *http.Request) {
 	for res.Next() {
 		c := utils.Comment{}
 		err := res.Scan(&c.Id, &c.IdMusic, &c.IdUser, &c.Datep, &c.Msg, &c.Likes)
+		c.Likes = like.GetNbLikesFromIdComment(strconv.Itoa(c.Id))
 		if err != nil {
 			utils.Response(resp, http.StatusInternalServerError, `{"message":"An error occured while collecting comments"}`)
 			return
 		}
 		comments = append(comments, c)
 	}
-	utils.Response(resp, http.StatusOK, `{"message":"comments found"}`)
+	jcomments, err := json.Marshal(comments)
+	if err != nil {
+		utils.Response(resp, http.StatusBadRequest, `{"message":"An error occured with the result"}`)
+		return
+	}
+	utils.Response(resp, http.StatusOK, `{"message":"comments found", "result":`+string(jcomments)+`}`)
 }
 
 func AddComment(resp http.ResponseWriter, req *http.Request) {

@@ -1,6 +1,7 @@
 package like
 
 import (
+	"encoding/json"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/database"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/utils"
 	"net/http"
@@ -44,7 +45,12 @@ func GetLikeMusic(resp http.ResponseWriter, req *http.Request) {
 		}
 		likes = append(likes, l)
 	}
-	utils.Response(resp, http.StatusOK, `{"message":"likes found"}`)
+	jlikes, err := json.Marshal(likes)
+	if err != nil {
+		utils.Response(resp, http.StatusBadRequest, `{"message":"An error occured with the result"}`)
+		return
+	}
+	utils.Response(resp, http.StatusOK, `{"message":"likes found", "result":`+string(jlikes)+`}`)
 }
 
 func AddLikeMusic(resp http.ResponseWriter, req *http.Request) {

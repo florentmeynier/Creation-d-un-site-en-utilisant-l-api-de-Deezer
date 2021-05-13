@@ -7,7 +7,15 @@ import (
 )
 
 func GetUser(resp http.ResponseWriter, req *http.Request) {
-	// TODO
+	id := req.FormValue("id")
+	if id != "" && id != "-1" {
+		login := GetLoginFromUserId(id)
+		if login != "" {
+			utils.Response(resp, http.StatusOK, `{"message":"User found","login":"`+login+`"}`)
+			return
+		}
+	}
+	utils.Response(resp, http.StatusInternalServerError, `{"message":"No Login found"}`)
 }
 
 func AddUser(resp http.ResponseWriter, req *http.Request) {
@@ -71,7 +79,7 @@ func RemoveUser(login string) string {
 	if err != nil {
 		return "An error occured" + err.Error()
 	}
-	res, err := db.Exec("DELETE FROM User WHERE login=?", login)
+	res, err := db.Exec("DELETE FROM User WHERE login = ?", login)
 	if err != nil || db.Close() != nil {
 		return "An error occured" + err.Error()
 	}
@@ -85,6 +93,32 @@ func RemoveUser(login string) string {
 	return ""
 }
 
+func GetUserIdFromLogin(login string) string {
+	db, err := database.Connect()
+	if err != nil {
+		return ""
+	}
+	id := ""
+	err = db.QueryRow("SELECT id FROM User WHERE login = ?", login).Scan(&id)
+	if err != nil || db.Close() != nil {
+		return ""
+	}
+	return id
+}
+
+func GetLoginFromUserId(id string) string {
+	db, err := database.Connect()
+	if err != nil {
+		return ""
+	}
+	login := ""
+	err = db.QueryRow("SELECT login FROM User WHERE id = ?", id).Scan(&login)
+	if err != nil || db.Close() != nil {
+		return ""
+	}
+	return login
+}
+
 func ExistUser(login string) bool {
 	db, err := database.Connect()
 	if err != nil {
@@ -96,4 +130,23 @@ func ExistUser(login string) bool {
 		return false
 	}
 	return exist == 1
+}
+
+func PwdMatchWithUser(id string, pwd string) string {
+	db, err := database.Connect()
+	if err != nil {
+		return "An error occured with database"
+	}
+	exist := 0
+	err = db.QueryRow("SELECT COUNT(*) FROM User WHERE id = ? AND pwd = ?", id, pwd).Scan(&exist)
+	if err != nil {
+		return "An error occured when searching the user in database"
+	}
+	if db.Close() != nil {
+		return "An error occured with database"
+	}
+	if exist == 0 {
+		return "Login and Password don't match"
+	}
+	return ""
 }

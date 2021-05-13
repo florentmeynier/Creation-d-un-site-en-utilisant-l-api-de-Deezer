@@ -24,11 +24,14 @@ func Create() {
 		"\n CONSTRAINT Unique_login UNIQUE (login)," +
 		"\n CONSTRAINT Unique_mail UNIQUE (mail)" +
 		"\n )")
+	/*db.Exec("CREATE TABLE Music (" +
+	"\n id INT PRIMARY KEY NOT NULL," +
+	"\n title VARCHAR(255) NOT NULL," +
+	"\n artist VARCHAR(255) NOT NULL," +
+	"\n album VARCHAR(255) NOT NULL" +
+	"\n )")*/
 	db.Exec("CREATE TABLE Music (" +
-		"\n id INT PRIMARY KEY NOT NULL," +
-		"\n title VARCHAR(255) NOT NULL," +
-		"\n artist VARCHAR(255) NOT NULL," +
-		"\n album VARCHAR(255) NOT NULL" +
+		"\n id INT PRIMARY KEY NOT NULL" +
 		"\n )")
 	db.Exec("CREATE TABLE Comment (" +
 		"\n id INT PRIMARY KEY NOT NULL AUTO_INCREMENT," +
@@ -53,6 +56,12 @@ func Create() {
 		"\n PRIMARY KEY (id_Comment, id_User)," +
 		"\n FOREIGN KEY (id_Comment) REFERENCES Comment(id)," +
 		"\n FOREIGN KEY (id_User) REFERENCES User(id)" +
+		"\n )")
+	db.Exec("CREATE TABLE Connection (" +
+		"\n id INT NOT NULL," +
+		"\n idSession VARCHAR(32) NOT NULL," +
+		"\n PRIMARY KEY (id)," +
+		"\n FOREIGN KEY (id) REFERENCES User(id)" +
 		"\n )")
 }
 

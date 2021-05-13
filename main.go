@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/comment"
+	"github.com/bouchenakihabib/PC3R_DEEZER/src/connection"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/database"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/like"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/music"
@@ -81,16 +82,42 @@ func handleLikeComment(resp http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func handleConnection(resp http.ResponseWriter, req *http.Request) {
+	err := req.ParseForm()
+	if err != nil {
+		panic(err.Error())
+	}
+	switch req.Method {
+	case "GET":
+		connection.GetConnection(resp, req)
+	case "POST":
+		connection.Connect(resp, req)
+	case "DELETE":
+		connection.Disconnect(resp, req)
+	}
+}
+
+func _(resp http.ResponseWriter, req *http.Request) {
+	http.Redirect(resp, req, "/home", 301)
+}
+
 func main() {
-	log.Printf("test")
+	log.Printf("Server start")
 
 	database.Create()
+
+	http.Handle("/", http.FileServer(http.Dir("./WebContent")))
+
+	/*http.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
+		http.Redirect(resp, req, "/home", 200)
+	})*/
 
 	http.HandleFunc("/user", handleUser)
 	http.HandleFunc("/music", handleMusic)
 	http.HandleFunc("/comment", handleComment)
 	http.HandleFunc("/like_music", handleLikeMusic)
 	http.HandleFunc("/like_comment", handleLikeComment)
+	http.HandleFunc("/connection", handleConnection)
 
 	err := http.ListenAndServe(":8080", nil)
 

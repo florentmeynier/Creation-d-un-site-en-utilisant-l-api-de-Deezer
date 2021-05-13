@@ -1,6 +1,7 @@
 package like
 
 import (
+	"encoding/json"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/database"
 	"github.com/bouchenakihabib/PC3R_DEEZER/src/utils"
 	"net/http"
@@ -44,7 +45,12 @@ func GetLikeComment(resp http.ResponseWriter, req *http.Request) {
 		}
 		likes = append(likes, l)
 	}
-	utils.Response(resp, http.StatusOK, `{"message":"likes found"}`)
+	jlikes, err := json.Marshal(likes)
+	if err != nil {
+		utils.Response(resp, http.StatusBadRequest, `{"message":"An error occured with the result"}`)
+		return
+	}
+	utils.Response(resp, http.StatusOK, `{"message":"likes found", "result":"`+string(jlikes)+`"}`)
 }
 
 func AddLikeComment(resp http.ResponseWriter, req *http.Request) {
@@ -110,4 +116,21 @@ func DeleteLikeComment(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	utils.Response(resp, http.StatusOK, `{"message":"Comment likes deleted"}`)
+}
+
+func GetNbLikesFromIdComment(id string) int {
+	db, err := database.Connect()
+	if err != nil {
+		return -1
+	}
+	exist := -1
+	err = db.QueryRow("SELECT COUNT(*) FROM comment_like WHERE id_Comment = ?", id).Scan(&exist)
+	if err != nil {
+		return -1
+	}
+	err = db.Close()
+	if err != nil {
+		return -1
+	}
+	return exist
 }

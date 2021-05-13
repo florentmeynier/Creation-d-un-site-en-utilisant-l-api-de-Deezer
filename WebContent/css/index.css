@@ -1,0 +1,54 @@
+.background {
+    background-color: darkslategray;
+    overflow: hidden;
+}
+
+.searchResult {
+    display: none;
+}
+
+.registerBtn {
+    float: right;
+    display: none;
+}
+
+.loginBtn {
+    float: right;
+    display: none;
+}
+
+.disconnectBtn {
+    float: right;
+    display: none;
+}
+
+.rforms {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.lforms {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.formsContent {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.form-example {
+
+}
+
