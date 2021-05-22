@@ -5,8 +5,14 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+const login string = "root"
+const pwd string = ""
+const adress string = "localhost"
+const port string = "3306"
+const dbname string = "pc3rdeezer"
+
 func Connect() (*sql.DB, error) {
-	db, err := sql.Open("mysql", "root@tcp(localhost:3306)/test")
+	db, err := sql.Open("mysql", login+":"+pwd+"@tcp("+adress+":"+port+")/"+dbname)
 
 	return db, err
 }

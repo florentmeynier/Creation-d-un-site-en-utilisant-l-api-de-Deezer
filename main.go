@@ -108,10 +108,6 @@ func main() {
 
 	http.Handle("/", http.FileServer(http.Dir("./WebContent")))
 
-	/*http.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
-		http.Redirect(resp, req, "/home", 200)
-	})*/
-
 	http.HandleFunc("/user", handleUser)
 	http.HandleFunc("/music", handleMusic)
 	http.HandleFunc("/comment", handleComment)
@@ -119,7 +115,8 @@ func main() {
 	http.HandleFunc("/like_comment", handleLikeComment)
 	http.HandleFunc("/connection", handleConnection)
 
-	err := http.ListenAndServe(":8080", nil)
+	port := "8080"
+	err := http.ListenAndServe(":"+port, nil)
 
 	if err != nil {
 		panic(err.Error())
