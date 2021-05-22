@@ -72,7 +72,6 @@ window.onload = function () {
                     document.cookie = "idSession=; expires=Thu, 01 Jan 1970 00:00:00 UTC"
                     console.log("id" + getCookie("idSession"))
                 }
-                window.location.reload(true)
             })
     }
 
@@ -102,20 +101,29 @@ window.onload = function () {
                         img.src = m["album"]["cover"]
                         img.width = 50
                         img.height = 50
+                        img.style.cursor = "pointer"
                         img.addEventListener("click", function () {
-                            displayMusic(form)
+                            displayMusic(form.name)
                         })
                         form.appendChild(img)
 
                         const infos = document.createElement("ul")
+
                         const lititle = document.createElement("li")
                         const title = document.createTextNode("Title : " + m["title"] + " ")
                         lititle.appendChild(title)
+                        infos.appendChild(lititle)
+
                         const liartist = document.createElement("li")
                         const artist = document.createTextNode("Artist : " + m["artist"]["name"])
                         liartist.appendChild(artist)
-                        infos.appendChild(lititle)
                         infos.appendChild(liartist)
+
+                        const lialbum = document.createElement("li")
+                        const album = document.createTextNode("Album : " + m["album"]["title"])
+                        lialbum.appendChild(album)
+                        infos.appendChild(lialbum)
+
                         form.appendChild(infos)
 
                         li.appendChild(form)
@@ -127,27 +135,96 @@ window.onload = function () {
     }
 }
 
-function displayMusic(form) {
-    const ul = document.createElement("ul")
-    collectMusicLikes(form, ul)
-    collectComment(form, ul)
+function displayMusic(musicId) {
+    console.log(musicId)
+    const form = document.createElement('form')
+    form.innerHTML = ""
+    form.name = musicId
+    console.log("step a1")
 
-    console.log(form.name)
-    document.getElementById("search-result").style.display = 'none'
+    let params = new URLSearchParams()
+    params.append("music_Id", musicId)
+    console.log("step b1")
 
-    document.getElementById("display-music").style.display = 'block'
-    const displayM = document.getElementById("display-music2")
-    displayM.innerHTML = ""
+    fetch("/music?" + params.toString())
+        .then(res => res.json())
+        .then(function (jsonData) {
+            console.log("step c1")
+            if(jsonData["code"] === "200") {
+                const displayM = document.getElementById("display-music2")
+                displayM.innerHTML = ""
 
-    const form2 = document.createElement('form')
-    form2.name = form.name
-    const li2 = document.createElement('li')
+                const track = jsonData["result"]
+                console.log(track)
 
-    displayM.appendChild(li2)
+                const img = document.createElement("img")
+                img.src = track["album"]["cover"]
+                img.width = 50
+                img.height = 50
+                form.appendChild(img)
 
-    displayM.appendChild(form)
+                const preview = document.createElement("audio")
+                preview.controls = true
+                preview.volume = 0.2
 
-    displayM.appendChild(ul)
+                const source = document.createElement("source")
+                source.src = track["preview"]
+                source.type = "audio/mpeg"
+
+                preview.appendChild(source)
+
+                form.appendChild(preview)
+
+                const imgDeezer = document.createElement("img")
+                imgDeezer.src = "image/deezerLogo.png"
+                imgDeezer.height = 50
+                imgDeezer.width = 50
+                imgDeezer.onclick = function () {
+                    window.open(track["link"])
+                }
+                imgDeezer.style.cursor = "pointer"
+                form.appendChild(imgDeezer)
+
+
+
+                const infos = document.createElement("ul")
+                const lititle = document.createElement("li")
+                const title = document.createTextNode("Title : " + track["title"] + " ")
+                lititle.appendChild(title)
+                infos.appendChild(lititle)
+
+                const liartist = document.createElement("li")
+                const artist = document.createTextNode("Artist : " + track["artist"]["name"])
+                liartist.appendChild(artist)
+                infos.appendChild(liartist)
+
+                const lialbum = document.createElement("li")
+                const album = document.createTextNode("Album : " + track["album"]["title"])
+                lialbum.appendChild(album)
+                infos.appendChild(lialbum)
+
+                form.appendChild(infos)
+
+                const ul = document.createElement("ul")
+                collectMusicLikes(form, ul)
+                collectComment(form, ul)
+
+                document.getElementById("search-result").style.display = 'none'
+
+                document.getElementById("display-music").style.display = 'block'
+
+                const form2 = document.createElement('form')
+                form2.name = form.name
+                const li2 = document.createElement('li')
+                console.log("step 3")
+                displayM.appendChild(li2)
+
+                displayM.appendChild(form)
+
+                displayM.appendChild(ul)
+                console.log("fini")
+            }
+        })
 }
 
 function collectMusicLikes(form, ul) {
@@ -184,9 +261,10 @@ function collectMusicLikes(form, ul) {
                         },
                         body: new URLSearchParams()
                     })
+                        .then(res => res.json())
                         .then(function(jsonData) {
                             if(jsonData["code"] === "200") {
-                                displayMusic(form)
+                                displayMusic(form.name)
                             }
                         })
                 })
@@ -203,7 +281,7 @@ function collectComment(form, ul) {
 
     userId.then((id) => {
         if(id === -1) {
-            console.log("a")
+            console.log("Not implemented")
         } else {
             const addComm = document.createElement("input")
             addComm.id = "AddComm"
@@ -225,10 +303,12 @@ function collectComment(form, ul) {
                         'Accept': 'application/json'
                     }
                 })
+                    .then(res => res.json())
                     .then(function (jsonData) {
-                        window.alert(jsonData)
+                        window.alert(jsonData["message"])
                         if(jsonData["code"] === "200") {
-                           displayMusic(form)
+                            displayMusic(form.name)
+                            console.log("added")
                         }
                     })
             }
@@ -280,12 +360,16 @@ function collectComment(form, ul) {
 
                         msgForm.appendChild(document.createTextNode("Likes : " + com["Likes"]))
 
-                        const button = document.createElement("button")
-                        button.innerHTML = "Like"
-                        button.addEventListener("click", function() {
+                        const likeButton = document.createElement("img")
+                        likeButton.src = "image/likeButton.png"
+                        likeButton.width = 12
+                        likeButton.height = 12
+                        likeButton.style.marginLeft = "10px"
+                        likeButton.style.cursor = "pointer"
+                        likeButton.onclick = function() {
                             const userId = Promise.resolve(getUserIdFromSession())
                             userId.then((id) => {
-                                if(id == -1) {
+                                if (id == -1) {
                                     window.alert("You need to be connected")
                                 }
                                 let params = new URLSearchParams()
@@ -298,15 +382,16 @@ function collectComment(form, ul) {
                                         'Accept': 'application/json'
                                     }
                                 })
+                                    .then(res => res.json())
                                     .then(function (jsonData) {
-                                        if(jsonData["code"] === "200") {
-                                            displayMusic(form)
+                                        if (jsonData["code"] === "200") {
+                                            displayMusic(form.name)
                                         }
                                     })
                             })
-                        })
+                        }
+                        msgForm.appendChild(likeButton)
 
-                        msgForm.appendChild(button)
 
                         li.appendChild(msgForm)
 

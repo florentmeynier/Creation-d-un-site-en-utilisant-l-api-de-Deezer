@@ -1,5 +1,8 @@
-.background {
-    background-color: darkslategray;
+body {
+    background-color: lightgray;
+}
+
+.backgroundHeader {
     overflow: hidden;
 }
 

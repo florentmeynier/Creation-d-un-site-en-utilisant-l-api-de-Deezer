@@ -24,12 +24,6 @@ func Create() {
 		"\n CONSTRAINT Unique_login UNIQUE (login)," +
 		"\n CONSTRAINT Unique_mail UNIQUE (mail)" +
 		"\n )")
-	/*db.Exec("CREATE TABLE Music (" +
-	"\n id INT PRIMARY KEY NOT NULL," +
-	"\n title VARCHAR(255) NOT NULL," +
-	"\n artist VARCHAR(255) NOT NULL," +
-	"\n album VARCHAR(255) NOT NULL" +
-	"\n )")*/
 	db.Exec("CREATE TABLE Music (" +
 		"\n id INT PRIMARY KEY NOT NULL" +
 		"\n )")
@@ -63,24 +57,4 @@ func Create() {
 		"\n PRIMARY KEY (id)," +
 		"\n FOREIGN KEY (id) REFERENCES User(id)" +
 		"\n )")
-}
-
-func InsertOrRemove(request string) string {
-	db, err := Connect()
-	if err != nil {
-		return "Error while connecting to database"
-	}
-	res, err := db.Exec(request)
-	if err != nil {
-		return "Error when trying to insert"
-	}
-	err = db.Close()
-	if err != nil {
-		return "Error when closing database"
-	}
-	r, err := res.RowsAffected()
-	if r == 0 || err != nil {
-		return "Insert failed"
-	}
-	return ""
 }
